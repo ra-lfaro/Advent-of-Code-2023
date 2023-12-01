@@ -75,10 +75,13 @@ const getFirstDigit = (s: string) => {
       return Number(s.charAt(i));
     }
 
+    // part 2 portion of solution --
     let potentialDigit = isThisADigitSpelledOut(i, s);
     if (potentialDigit !== '') {
       return NUMBER_LOOKUP[potentialDigit];
     }
+    // --
+    
   }
 };
 
@@ -88,10 +91,13 @@ const getLastDigit = (s: string) => {
       return Number(s.charAt(i));
     }
 
+    // part 2 portion of solution --
     let potentialDigit = isThisADigitSpelledOut(i, s);
     if (potentialDigit !== '') {
       return NUMBER_LOOKUP[potentialDigit];
     }
+    // --
+
   }
 };
 
