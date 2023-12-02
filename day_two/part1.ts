@@ -42,7 +42,20 @@ const isGameValid = (gameRecord: string) => {
 
   const groupMatches = [...gameRecord.matchAll(RECORD_COUNT_REGEX)];
 
+  /*
+    groupMatches will look like 
+    [
+      groups: {
+        blue: '5',
+        green: undefined,
+        red: undefined
+      },
+      ...
+    ]
+  */
+
   for (let match of groupMatches) {
+    // if any are larger then their respective maxs fail
     if (
       (+(match?.groups?.blue ?? 0) > BLUE_MAX) ||
       (+(match?.groups?.green ?? 0) > GREEN_MAX) ||

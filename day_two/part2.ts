@@ -68,10 +68,23 @@ const getMinimumCubes = (gameRecord: string) => {
 
   const groupMatches = [...gameRecord.matchAll(RECORD_COUNT_REGEX)];
 
+  /*
+    groupMatches will look like 
+    [
+      groups: {
+        blue: '5',
+        green: undefined,
+        red: undefined
+      },
+      ...
+    ]
+  */
+
   let redMax = 0;
   let blueMax = 0;
   let greenMax = 0;
 
+  // the minimum to make a game valid is the max of each color pulled in a whole game.
   for (let match of groupMatches) {
     redMax = Math.max(redMax, +(match?.groups?.red ?? 0));
     blueMax = Math.max(blueMax, +(match?.groups?.blue ?? 0));
@@ -85,8 +98,8 @@ const checkGames = (games = GAME_RECORDS) => {
   let result = 0;
 
   for (let game of games) {
-    let [, gameRecord] = game.split(': ');
-    let [redMax, blueMax, greenMax] = getMinimumCubes(gameRecord);
+    let [redMax, blueMax, greenMax] = getMinimumCubes(game);
+
     let power = redMax * blueMax * greenMax;
     result += power;
   }
