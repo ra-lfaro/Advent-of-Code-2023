@@ -70,6 +70,11 @@ type NumberFound = [
   numberEndIndex: number
 ];
 
+type PotentialGear = [
+  lineAndGearIndex: string, // i.e '1-6' lineIndex of 1, string index 6 where the * is located
+  NumberFound
+]
+
 const GEAR_ADJACENT_REGEX = /\*/ //any character not a digit or .
 
 const findNumbersInLine = (line: string, lineIndex: number) => {
@@ -95,6 +100,7 @@ const findNumbersInLine = (line: string, lineIndex: number) => {
       }
 
     } else {
+      // if we have a start and have hit another non digit weve hit the end of the word
       if (wordEnd >= wordStart && wordStart !== -1) {
         numbersFound.push([lineIndex, line.slice(wordStart, wordEnd + 1), wordStart, wordEnd])
         wordStart = -1;
@@ -116,7 +122,7 @@ const getPotentialGears = (schamatic: string[], numFound: NumberFound) => {
   const below = schamatic[lineIndex + 1]?.slice(extendedStart, extendedEnd) || '';
   const leftAndRight = schamatic[lineIndex]?.slice(extendedStart, extendedEnd);
 
-  let potentialGears: [string, NumberFound][] = [];
+  let potentialGears: PotentialGear[] = [];
 
   if (GEAR_ADJACENT_REGEX.test(above)) {
     potentialGears.push([`${lineIndex - 1}-${above.indexOf('*') + extendedStart}`, numFound]);
@@ -133,9 +139,26 @@ const getPotentialGears = (schamatic: string[], numFound: NumberFound) => {
   return potentialGears;
 };
 
+const sumAllGearRatios = (allPotentialGears: Record<string, NumberFound[]>) => {
+  let result = 0;
 
-const sumAllGearRatios = (schamatic = ENGINE_SCHEMATIC) => {
-  let potentialGears: Record<string, NumberFound[]> = {};
+  Object.keys(allPotentialGears).map(key => {
+    // only exactly two adjacent count towards result
+    if (allPotentialGears[key].length === 2) {
+      const [gear1, gear2] = allPotentialGears[key];
+      const [, gear1Num] = gear1;
+      const [, gear2Num] = gear2;
+
+      result += (+gear1Num * +gear2Num);
+    }
+  })
+
+  return result;
+}
+
+
+const calculateGearRatios = (schamatic = ENGINE_SCHEMATIC) => {
+  let allPotentialGears: Record<string, NumberFound[]> = {};
 
   for (let i = 0; i < schamatic.length; i++) {
     let numbersInLine = findNumbersInLine(schamatic[i], i);
@@ -148,31 +171,19 @@ const sumAllGearRatios = (schamatic = ENGINE_SCHEMATIC) => {
       gearsForNumFound.map(gear => {
         const [indexOfGear, numFound] = gear;
 
-        if (potentialGears[indexOfGear]) {
-          potentialGears[indexOfGear].push(numFound);
+        if (allPotentialGears[indexOfGear]) {
+          allPotentialGears[indexOfGear].push(numFound);
         } else {
-          potentialGears[indexOfGear] = [numFound];
+          allPotentialGears[indexOfGear] = [numFound];
         }
       });
 
     }
   };
 
-  let result = 0;
-  Object.keys(potentialGears).map(key => {
-    // only exactly two adjacent count towards result
-    if (potentialGears[key].length === 2) {
-      const [gear1, gear2] = potentialGears[key];
-      const [, gear1Num] = gear1;
-      const [, gear2Num] = gear2;
-
-      result += (+gear1Num * +gear2Num);
-    }
-  })
-
-  return result;
+  return sumAllGearRatios(allPotentialGears);
 }
 
-console.log(sumAllGearRatios());
+console.log(calculateGearRatios());
 
 

@@ -65,6 +65,7 @@ const findNumbersInLine = (line: string, lineIndex: number) => {
       }
 
     } else {
+      // if we have a start and have hit another non digit weve hit the end of the word
       if (wordEnd >= wordStart && wordStart !== -1) {
         numbersFound.push([lineIndex, line.slice(wordStart, wordEnd + 1), wordStart, wordEnd])
         wordStart = -1;
