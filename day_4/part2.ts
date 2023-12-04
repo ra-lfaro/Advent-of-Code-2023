@@ -86,7 +86,7 @@ const countCardMatches = (card: string) => {
   return matchingNumbers.length;
 };
 
-const sumAllCardPoints = (cards = SCRATCH_CARDS) => {
+const calculateCardCounts = (cards = SCRATCH_CARDS) => {
   let cardCounts = new Array(cards.length).fill(1);
 
   for (let i = 0; i < cards.length; i++) {
@@ -105,4 +105,4 @@ const sumAllCardPoints = (cards = SCRATCH_CARDS) => {
 }
 
 
-console.log(sumAllCardPoints())
+console.log(calculateCardCounts())

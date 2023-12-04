@@ -61,13 +61,7 @@ const parseNumbers = (numbers: string) => {
 }
 
 const sumAllCardPoints = (cards = SCRATCH_CARDS) => {
-  let result = 0;
-
-  cards.map(card => {
-    result += countCardPoints(card);
-  })
-
-  return result;
+  return cards.reduce((ongoing: number, curr: string) => ongoing + countCardPoints(curr), 0);
 }
 
 console.log(sumAllCardPoints())
