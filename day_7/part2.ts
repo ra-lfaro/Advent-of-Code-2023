@@ -68,7 +68,10 @@ const eliminatePossibleRanks = (hand: string) => {
       that will eliminate options. Same with once you've certain amounts of cards
       i.e
         seeing 2 different cards eliminated 5oak
+        seeing 3 different cards eliminates 4oak and full house
         seeing 4 of one card eliminates full house
+        seeing 4 different cards eliminates 3oak and 2pair
+        seeing 3 of one card eliminates two pair
     */
 
     seenCards[c] = (seenCards[c] || 0) + 1;
