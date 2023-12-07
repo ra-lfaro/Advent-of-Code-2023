@@ -39,16 +39,6 @@ const replaceRoyalsWithAlphaRanked = (hand: string) => {
   return cleanedString;
 }
 
-const hasPsuedoCount = (counts: number[], jokers: number, goal: number) => {
-  for (let c of counts) {
-    if (c + jokers >= goal) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 const eliminatePossibleRanks = (hand: string) => {
   const possibleHands = { fiveOAK: true, fourOAK: true, fullHouse: true, threeOAK: true, twoPair: true, onePair: true };
 
@@ -110,12 +100,12 @@ const eliminatePossibleRanks = (hand: string) => {
   // We can eliminate these two options using the total amount of each occurance and the amoun of jokers
   // if the occurance of a card + the amount of jokers makes a 4OAK, then we want that and not a full house
   const nonJokerCardCounts = Object.values(seenCards);
-  if (possibleHands.fourOAK && hasPsuedoCount(nonJokerCardCounts, jokers, 4)) {
+  if (possibleHands.fourOAK && Math.max(...nonJokerCardCounts) + jokers >= 4) {
     possibleHands.fullHouse = false;
   }
 
   // if the occurance of a card + the amount of jokers makes a 3OAK, then we want that and not a two pair
-  if (possibleHands.threeOAK && hasPsuedoCount(nonJokerCardCounts, jokers, 3)) {
+  if (possibleHands.threeOAK && Math.max(...nonJokerCardCounts) + jokers >= 3) {
     possibleHands.twoPair = false;
   }
 
