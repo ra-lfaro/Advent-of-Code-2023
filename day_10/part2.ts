@@ -90,10 +90,8 @@ class MazeSpace {
   coords: [number, number];
 
   isStart = false;
-  isEmpty: boolean;
   isMazePath = false;
   isEnclosed = false;
-
 
   // possible connections
   up = false;
@@ -103,8 +101,6 @@ class MazeSpace {
 
   constructor(value: string, x: number, y: number) {
     this.value = value
-    this.isEmpty = !value || value === '.';
-
     this.coords = [x, y];
 
     switch (value) {
@@ -203,23 +199,12 @@ class Maze {
 
     let curr = firstStep;
 
-    let isDeadEnd = false;
-
     let stepsTaken = 1;
 
-    while (!isDeadEnd && !curr.isStart) {
+    while (!curr.isStart) {
       curr.isMazePath = true;
 
       //every step should have two options, the path you just came from and the next.
-
-      let possibleNextCoords = curr.getPossibleNextCoords();
-
-      // if theres only 1 path, its the path youre coming from so dead end
-      if (possibleNextCoords.length === 1) {
-        isDeadEnd = true;
-        break;
-      }
-
       for (let [x, y] of curr.getPossibleNextCoords()) {
         if (!this.maze?.[x]?.[y] || (seen.has(this.maze[x][y]) && !this.maze[x][y].isStart)) {
           continue;
@@ -232,14 +217,12 @@ class Maze {
     }
 
 
-    return isDeadEnd ? -1 : stepsTaken;
+    return stepsTaken;
   }
 
   getPossibleFirstSteps() {
     const steps: MazeSpace[] = [];
-
     let [startX, startY] = this.start.coords;
-
 
     // does the above space have the option to go down
     if (this.maze?.[startX - 1]?.[startY]?.down) {
@@ -263,6 +246,7 @@ class Maze {
     return steps;
   }
 
+  // point in polygon principal
   countEnclosed() {
     let count = 0;
     let isOutside = true;
@@ -305,43 +289,6 @@ class Maze {
         let val = " "
         if (entry.isMazePath || entry.isStart) {
           val = entry.value;
-        }
-        row += val;
-      }
-      console.log(row);
-    }
-
-    console.log(`Start: ${this.start?.coords}`);
-  }
-
-  printEmptySpaces() {
-    for (let col = 0; col < this.maze.length; col++) {
-      let row = '';
-      for (let entry of this.maze[col]) {
-        let val = " "
-        if (entry.isEmpty) {
-          if (entry.isEnclosed) {
-            val = 'X';
-          } else {
-            val = 'O';
-
-          }
-        }
-        row += val;
-      }
-      console.log(row);
-    }
-
-    console.log(`Start: ${this.start?.coords}`);
-  }
-
-  printFillers() {
-    for (let col = 0; col < this.maze.length; col++) {
-      let row = '';
-      for (let entry of this.maze[col]) {
-        let val = " "
-        if (!(entry.isMazePath || entry.isStart) && !entry.isEmpty) {
-          val = 'X';
         }
         row += val;
       }
@@ -407,16 +354,14 @@ const calculateFurthestStep = (sketch = MAZE_SKETCH) => {
   console.log('')
 
   let maze = new Maze(sketch);
-  // maze.print();
 
   const lengthOfMaze = maze.traverse();
   let enclosedSpaces = maze.countEnclosed();
 
+  // maze.print();
   // maze.printPath();
-  // maze.printEmptySpaces();
   // maze.printEnclosedSpaces();
-  maze.printEnclosedSpacesWithMaze();
-  // maze.printFillers();
+  // maze.printEnclosedSpacesWithMaze();
 
   console.log(`Length of Maze: ${lengthOfMaze}`);
   console.log(`Length of Maze / 2: ${lengthOfMaze / 2}`);

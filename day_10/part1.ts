@@ -52,7 +52,6 @@ class MazeSpace {
   coords: [number, number];
 
   isStart = false;
-  isEmpty: boolean;
 
   // possible connections
   up = false;
@@ -62,8 +61,6 @@ class MazeSpace {
 
   constructor(value: string, x: number, y: number) {
     this.value = value
-    this.isEmpty = !value || value === '.';
-
     this.coords = [x, y];
 
     switch (value) {
@@ -158,23 +155,11 @@ class Maze {
 
   traverseDownPath(firstStep: MazeSpace) {
     let seen = new Set([this.start, firstStep]);
-
     let curr = firstStep;
-
-    let isDeadEnd = false;
-
     let stepsTaken = 1;
 
-    while (!isDeadEnd && !curr.isStart) {
+    while (!curr.isStart) {
       //every step should have two options, the path you just came from and the next.
-
-      let possibleNextCoords = curr.getPossibleNextCoords();
-
-      // if theres only 1 path, its the path youre coming from so dead end
-      if (possibleNextCoords.length === 1) {
-        isDeadEnd = true;
-        break;
-      }
 
       for (let [x, y] of curr.getPossibleNextCoords()) {
         if (!this.maze?.[x]?.[y] || (seen.has(this.maze[x][y]) && !this.maze[x][y].isStart)) {
@@ -188,7 +173,7 @@ class Maze {
     }
 
 
-    return isDeadEnd ? -1 : stepsTaken;
+    return stepsTaken;
   }
 
   getPossibleFirstSteps() {
@@ -240,6 +225,7 @@ const calculateFurthestStep = (sketch = MAZE_SKETCH) => {
   let maze = new Maze(sketch);
   // maze.print()
   const lengthOfMaze = maze.traverse();
+
   console.log(`Length of Maze: ${lengthOfMaze}`);
   console.log(`Length of Maze / 2: ${lengthOfMaze / 2}`);
 };
