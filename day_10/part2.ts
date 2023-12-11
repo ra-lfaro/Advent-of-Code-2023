@@ -130,12 +130,14 @@ class MazeSpace {
         break;
       case 'S':
         this.isStart = true;
+        this.isMazePath = true;
         break;
       default:
         break;
     }
   }
 
+  // this does not account for if the coords return are in maze bounds, needs validation on usage
   getPossibleNextCoords() {
     let nextPossibleCoords: [number, number][] = [];
     let [currX, currY] = this.coords;
@@ -180,7 +182,6 @@ class Maze {
 
         if (space.isStart) {
           this.start = space;
-          space.isMazePath = true;
         }
 
       }
@@ -191,6 +192,7 @@ class Maze {
   }
 
   traverse() {
+    // you can go either way since its a loop, get First will always return 2 since the input is valid/controlled
     return this.traverseDownPath(this.getPossibleFirstSteps()[0]);
   }
 
