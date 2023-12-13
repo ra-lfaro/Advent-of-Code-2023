@@ -26,40 +26,34 @@ const calculatePermutations = (originalReport: string) => {
   const [status, unparsedGroups] = originalReport.split(' ');
   const groups = unparsedGroups.split(',').map(g => +g);
 
-  const helper = (report: string, currIndex: number): string[] => {
+  const groupRegex = new RegExp(generateRegex(groups));
+  const expectedDamaged = groups.reduce((partialSum, a) => partialSum + a, 0);
+
+  const helper = (report: string, currIndex: number): number => {
+
+    if ((report.match(/#/g) || []).length > expectedDamaged) {
+      return 0;
+    }
+
     if (currIndex === report.length) {
-      return [report];
+      return groupRegex.test(report) ? 1 : 0
     }
 
     if (report[currIndex] === '?') {
-      return [
-        ...helper(report.slice(0, currIndex) + '.' + report.slice(currIndex + 1), currIndex + 1),
-        ...helper(report.slice(0, currIndex) + '#' + report.slice(currIndex + 1), currIndex + 1),
-      ]
+      return helper(report.slice(0, currIndex) + '.' + report.slice(currIndex + 1), currIndex + 1) +
+        helper(report.slice(0, currIndex) + '#' + report.slice(currIndex + 1), currIndex + 1);
     }
 
     return helper(report, currIndex + 1);
   };
 
-  let possibilities = helper(status, 0);
-
-  const groupRegex = new RegExp(generateRegex(groups));
-  const expectedDamaged = groups.reduce((partialSum, a) => partialSum + a, 0);
-
-  let matching = possibilities.filter(pos => {
-    return (
-      ((pos.match(/#/g) || []).length === expectedDamaged) &&
-      groupRegex.test(pos)
-    );
-  })
-
-  return matching
+  return helper(status, 0)
 };
 
 const countAll = (originalReport: string[]) => {
   let sum = 0;
   for (let report of originalReport) {
-    sum += calculatePermutations(report).length;
+    sum += calculatePermutations(report);
   }
   return sum;
 }
